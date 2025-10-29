@@ -54,11 +54,15 @@ class OCREnvironment:
         # Compute reward metrics
         anls = compute_anls(pred, gt)
         lev = levenshtein_ratio(pred, gt)
-        self.total_reward += 0.7 * anls + 0.3 * lev
+        self.total_reward = 0.7 * anls + 0.3 * lev
 
         # Note: This is for single step environment
-        # For multiple steps, this can looped wth threshold for reward
         self.state.done = True
+        multistep = False
+        # For multiple steps, this can looped wth threshold for reward
+        if multistep:
+            if self.state.step > 3 or self.total_reward > 0.8:
+                self.state.done = True
 
         obs = OCRObservation(
             total_reward=self.total_reward,
